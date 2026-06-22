@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>TaskFlow</title>
+</head>
+<body>
+
+<h1>TaskFlow</h1>
+
+<input id="taskInput" placeholder="New task">
+<button onclick="addTask()">Add</button>
+
+<ul id="tasks"></ul>
+
+<script>
+const API_URL = "http://localhost:3001";
+
+async function loadTasks() {
+    const response = await fetch(`${API_URL}/tasks`);
+    const tasks = await response.json();
+
+    const list = document.getElementById("tasks");
+    list.innerHTML = "";
+
+    tasks.forEach(task => {
+        const li = document.createElement("li");
+        li.textContent = task.title;
+        list.appendChild(li);
+    });
+}
+
+async function addTask() {
+    const input = document.getElementById("taskInput");
+
+    await fetch(`${API_URL}/tasks`, {
+        method: "POST",
+        headers: {
+            "Content-Type":"application/json"
+        },
+        body: JSON.stringify({
+            title: input.value
+        })
+    });
+
+    input.value = "";
+    loadTasks();
+}
+
+loadTasks();
+</script>
+
+</body>
+</html>
